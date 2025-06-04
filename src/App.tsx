@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import { Grid } from './Grid';
-import { generate5x5Puzzle, GridTemplate } from './puzzleUtils';
+import { generate5x5Puzzle, generate7x7Puzzle, GridTemplate } from './puzzleUtils';
 
 const GRID_SIZES = [
   { label: '5x5 grid', value: 5 },
@@ -21,13 +21,18 @@ const App: React.FC = () => {
   const [gridSize, setGridSize] = useState(5);
   const [allowedOps, setAllowedOps] = useState<string[]>(['+']);
   const [numberRange, setNumberRange] = useState<number>(20);
-  const [puzzle, setPuzzle] = useState(() => generate5x5Puzzle(allowedOps, numberRange));
+  const [puzzle, setPuzzle] = useState(() => generate5x5Puzzle(['+'], 20));
   const [userGrid, setUserGrid] = useState<string[][]>(emptyUserGrid(puzzle.grid));
   const [checkResult, setCheckResult] = useState<boolean[][] | null>(null);
   const [revealed, setRevealed] = useState(false);
 
   function handleNewPuzzle() {
-    const np = generate5x5Puzzle(allowedOps, numberRange);
+    let np;
+    if (gridSize === 7) {
+      np = generate7x7Puzzle(allowedOps, numberRange);
+    } else {
+      np = generate5x5Puzzle(allowedOps, numberRange);
+    }
     setPuzzle(np);
     setUserGrid(emptyUserGrid(np.grid));
     setCheckResult(null);

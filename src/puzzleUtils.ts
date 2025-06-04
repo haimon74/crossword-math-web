@@ -176,4 +176,104 @@ export function generate5x5Puzzle(allowedOps: string[], numberRange: number): Pu
     return { grid, solution };
   }
   return generate5x5Puzzle(['+'], numberRange);
+}
+
+export function generate7x7Puzzle(allowedOps: string[], numberRange: number): Puzzle {
+  const grid: GridTemplate = Array.from({ length: 7 }, () => Array(7).fill(null) as any);
+  const solution: string[][] = Array.from({ length: 7 }, () => Array(7).fill(''));
+
+  function randOp() {
+    return allowedOps[Math.floor(Math.random() * allowedOps.length)];
+  }
+
+  function generateOperands2(op1: string, op2: string, numberRange: number) {
+    for (let tries = 0; tries < 20; tries++) {
+      let a = Math.floor(Math.random() * (numberRange - 1)) + 1;
+      let b = Math.floor(Math.random() * (numberRange - 1)) + 1;
+      let c = Math.floor(Math.random() * (numberRange - 1)) + 1;
+      let res1, result;
+      if (op1 === '+') res1 = a + b;
+      else if (op1 === '-') res1 = a - b;
+      else if (op1 === '×') res1 = a * b;
+      else if (op1 === '÷' && b !== 0 && a % b === 0) res1 = a / b;
+      else continue;
+      if (op2 === '+') result = res1 + c;
+      else if (op2 === '-') result = res1 - c;
+      else if (op2 === '×') result = res1 * c;
+      else if (op2 === '÷' && c !== 0 && res1 % c === 0) result = res1 / c;
+      else continue;
+      if (!Number.isInteger(result) || result < 1 || result > numberRange) continue;
+      return { a, b, c, result };
+    }
+    return null;
+  }
+
+  let attempts = 0;
+  while (attempts < 100) {
+    attempts++;
+    const rowOps = Array.from({ length: 4 }, () => [randOp(), randOp()]);
+    const colOps = Array.from({ length: 4 }, () => [randOp(), randOp()]);
+    for (let r of [0,2,4,6]) {
+      const idx = r/2;
+      const ops = rowOps[idx];
+      const eq = generateOperands2(ops[0], ops[1], numberRange);
+      if (!eq) continue;
+      const { a, b, c, result } = eq;
+      solution[r][0] = a.toString();
+      solution[r][2] = b.toString();
+      solution[r][4] = c.toString();
+      solution[r][6] = result.toString();
+      grid[r][1] = { type: 'fixed', value: ops[0] };
+      grid[r][3] = { type: 'fixed', value: ops[1] };
+      grid[r][5] = { type: 'fixed', value: '=' };
+    }
+    for (let c of [0,2,4,6]) {
+      const idx = c/2;
+      const ops = colOps[idx];
+      let a = solution[0][c] ? parseInt(solution[0][c]) : Math.floor(Math.random() * (numberRange - 1)) + 1;
+      let b = solution[2][c] ? parseInt(solution[2][c]) : Math.floor(Math.random() * (numberRange - 1)) + 1;
+      let cval = solution[4][c] ? parseInt(solution[4][c]) : Math.floor(Math.random() * (numberRange - 1)) + 1;
+      let res1, result;
+      if (ops[0] === '+') res1 = a + b;
+      else if (ops[0] === '-') res1 = a - b;
+      else if (ops[0] === '×') res1 = a * b;
+      else if (ops[0] === '÷' && b !== 0 && a % b === 0) res1 = a / b;
+      else continue;
+      if (ops[1] === '+') result = res1 + cval;
+      else if (ops[1] === '-') result = res1 - cval;
+      else if (ops[1] === '×') result = res1 * cval;
+      else if (ops[1] === '÷' && cval !== 0 && res1 % cval === 0) result = res1 / cval;
+      else continue;
+      if (!Number.isInteger(result) || result < 1 || result > numberRange) continue;
+      solution[6][c] = result.toString();
+      grid[1][c] = { type: 'fixed', value: ops[0] };
+      grid[3][c] = { type: 'fixed', value: ops[1] };
+      grid[5][c] = { type: 'fixed', value: '=' };
+    }
+    // Set black/unused cells
+    const blackSet = new Set([
+      '1_1','1_3','1_5','3_1','3_3','3_5','5_1','5_3','5_5'
+    ]);
+    // Set hidden input cells
+    const inputSet = new Set([
+      '2_2','4_2','4_4','0_4','0_0','6_0','6_6'
+    ]);
+    for (let r = 0; r < 7; r++) {
+      for (let c = 0; c < 7; c++) {
+        if (blackSet.has(`${r}_${c}`)) {
+          grid[r][c] = { type: 'block' };
+        } else if (grid[r][c] && grid[r][c].type === 'fixed') {
+          // already set (operator or equals)
+          continue;
+        } else if (inputSet.has(`${r}_${c}`)) {
+          grid[r][c] = { type: 'input' };
+        } else {
+          // reveal as fixed
+          grid[r][c] = { type: 'fixed', value: solution[r][c] };
+        }
+      }
+    }
+    return { grid, solution };
+  }
+  return generate7x7Puzzle(['+'], numberRange);
 } 
