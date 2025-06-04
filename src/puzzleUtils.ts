@@ -55,30 +55,6 @@ export function generatePuzzleFromTemplate(template: GridTemplate, allowedOps: s
   return { grid, solution };
 }
 
-// Helper to generate a valid equation (operand1 op operand2 = result)
-function generateEquation(allowedOps: string[], numberRange: number) {
-  let op = allowedOps[Math.floor(Math.random() * allowedOps.length)];
-  let a = 0, b = 0, result = 0;
-  if (op === '+') {
-    a = Math.floor(Math.random() * (numberRange - 1)) + 1;
-    b = Math.floor(Math.random() * (numberRange - a)) + 1;
-    result = a + b;
-  } else if (op === '-') {
-    a = Math.floor(Math.random() * (numberRange - 1)) + 2;
-    b = Math.floor(Math.random() * (a - 1)) + 1;
-    result = a - b;
-  } else if (op === '×') {
-    a = Math.floor(Math.random() * (numberRange - 1)) + 1;
-    b = Math.floor(Math.random() * (numberRange - 1)) + 1;
-    result = a * b;
-  } else if (op === '÷') {
-    b = Math.floor(Math.random() * (numberRange - 1)) + 1;
-    result = Math.floor(Math.random() * (numberRange - 1)) + 1;
-    a = b * result;
-  }
-  return { a, op, b, result };
-}
-
 // 5x5 template: 3 row and 3 column equations, rest are blocks
 export function generate5x5Puzzle(allowedOps: string[], numberRange: number): Puzzle {
   const grid: GridTemplate = Array.from({ length: 5 }, () => Array(5).fill(null) as any);

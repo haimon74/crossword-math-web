@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import './App.css';
 import { Grid } from './Grid';
-import { generate5x5Puzzle, GridTemplate, Cell } from './puzzleUtils';
+import { generate5x5Puzzle, GridTemplate } from './puzzleUtils';
 
 const GRID_SIZES = [
-  { label: '5x5 (3 eq rows/cols)', value: 5 },
-  // 7x7 can be added later
+  { label: '5x5 grid', value: 5 },
+  { label: '7x7 grid', value: 7 },
 ];
 
 const OP_OPTIONS = [
@@ -64,30 +64,21 @@ const App: React.FC = () => {
   return (
     <div className="App" style={{ maxWidth: 600, margin: '0 auto', padding: 20 }}>
       <h2>Math Crossword Puzzle</h2>
-      <div className="controls" style={{ display: 'flex', gap: '1em', alignItems: 'center', justifyContent: 'center', margin: '1em 0' }}>
-        <label>
-          Grid Size:
-          <select value={gridSize} onChange={e => setGridSize(Number(e.target.value))}>
-            {GRID_SIZES.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-          </select>
-        </label>
-        <label>
-          Operation:
-          <select value={allowedOps.join(',')} onChange={e => {
-            const val = e.target.value;
-            const found = OP_OPTIONS.find(opt => opt.value.join(',') === val);
-            setAllowedOps(found ? found.value : ['+']);
-          }}>
-            {OP_OPTIONS.map(opt => <option key={opt.label} value={opt.value.join(',')}>{opt.label}</option>)}
-          </select>
-        </label>
-        <label>
-          Number Range:
-          <select value={numberRange} onChange={e => setNumberRange(Number(e.target.value))}>
-            {[10, 20, 30, 40, 50, 100].map(n => <option key={n} value={n}>Up to {n}</option>)}
-          </select>
-        </label>
-        <button onClick={handleNewPuzzle}>New Puzzle</button>
+      <div className="controls" style={{ display: 'flex', gap: '0.5em', alignItems: 'center', justifyContent: 'center', margin: '1em 0' }}>
+        <select value={gridSize} onChange={e => setGridSize(Number(e.target.value))}>
+          {GRID_SIZES.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+        </select>
+        <select value={allowedOps.join(',')} onChange={e => {
+          const val = e.target.value;
+          const found = OP_OPTIONS.find(opt => opt.value.join(',') === val);
+          setAllowedOps(found ? found.value : ['+']);
+        }}>
+          {OP_OPTIONS.map(opt => <option key={opt.label} value={opt.value.join(',')}>{opt.label}</option>)}
+        </select>
+        <select value={numberRange} onChange={e => setNumberRange(Number(e.target.value))}>
+          {[10, 20, 30, 40, 50, 100].map(n => <option key={n} value={n}>Up to {n}</option>)}
+        </select>
+        <button onClick={handleNewPuzzle}>New</button>
         <button onClick={handleCheck}>Check</button>
         <button onClick={handleReveal}>Reveal</button>
       </div>

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { GridTemplate, Cell } from './puzzleUtils';
+import { GridTemplate } from './puzzleUtils';
+import styles from './Grid.module.css';
 
 interface GridProps {
   grid: GridTemplate;
@@ -64,63 +65,28 @@ export const Grid: React.FC<GridProps> = ({ grid, solution, userGrid, onChange, 
   }, [activeCell]);
 
   return (
-    <table className="crossword-table" style={{ borderCollapse: 'collapse', margin: '0 auto', position: 'relative' }}>
+    <table className={styles.crosswordTable}>
       <tbody>
         {grid.map((row, r) => (
           <tr key={r}>
             {row.map((cell, c) => {
-              let cellStyle: React.CSSProperties = {
-                width: '2.5em',
-                height: '2.5em',
-                textAlign: 'center',
-                border: '1px solid #888',
-                fontSize: '1.2em',
-                fontWeight: 'bold',
-                padding: 0,
-                boxSizing: 'border-box',
-                position: 'relative',
-                verticalAlign: 'middle',
-              };
-              if (cell.type === 'block') {
-                cellStyle.background = '#222';
-                return <td key={c} style={cellStyle}></td>;
-              }
-              if (cell.type === 'fixed') {
-                cellStyle.background = '#fff';
-                cellStyle.color = 'blue';
-                return <td key={c} style={cellStyle}>{cell.value}</td>;
-              }
-              // input cell
-              cellStyle.background = '#ffa500';
-              cellStyle.cursor = 'pointer';
+              let cellClass = styles.cell;
+              if (cell.type === 'block') cellClass += ' ' + styles.block;
+              if (cell.type === 'fixed') cellClass += ' ' + styles.fixed;
+              if (cell.type === 'input') cellClass += ' ' + styles.input;
               return (
-                <td key={c} style={cellStyle} onClick={() => handleCellClick(r, c)}>
-                  <div>
-                    {userGrid[r][c] || ''}
+                <td key={c} className={cellClass} onClick={cell.type === 'input' ? () => handleCellClick(r, c) : undefined}>
+                  <div className={styles.cellInner}>
+                    {userGrid[r][c] || (cell.type === 'fixed' ? cell.value : '')}
                     {activeCell && activeCell.r === r && activeCell.c === c && (
                       <div
                         ref={dropdownRef}
-                        style={{
-                          position: 'absolute',
-                          left: 0,
-                          top: '100%',
-                          background: '#fff',
-                          border: '1px solid #aaa',
-                          borderRadius: 4,
-                          zIndex: 1000,
-                          minWidth: '3em',
-                          minHeight: '8em',
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: '0.2em',
-                          padding: '0.3em',
-                        }}
+                        className={styles.dropdown}
                       >
                         {choices.get(`${r}_${c}`)?.map(choice => (
                           <div
                             key={choice}
-                            style={{ padding: '0.5em 1em', cursor: 'pointer', color: '#1976d2', fontWeight: 'bold', userSelect: 'none', fontSize: '1.1em' }}
+                            className={styles.dropdownOption}
                             onClick={e => { e.stopPropagation(); handleChoiceSelect(r, c, choice); }}
                           >
                             {choice}
