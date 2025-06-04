@@ -1,38 +1,88 @@
+/* App container */
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  background: #f8f9fa;
   min-height: 100vh;
+}
+
+.crossword-grid {
+  margin: 0 auto 1em auto;
+  background: #fff;
+  border: 2px solid #bbb;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  display: grid;
+  grid-gap: 0;
+  border-collapse: collapse;
+}
+
+.cell {
+  width: 2.5em;
+  height: 2.5em;
+  border: 1px solid #888;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  box-sizing: border-box;
 }
 
-.App-link {
-  color: #61dafb;
+.cell.input {
+  background: #ffa500;
+  cursor: pointer;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.cell.input input {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  font-size: 1.2em;
+  border: none;
+  background: transparent;
+  outline: none;
+  color: #222;
+}
+
+.cell.fixed {
+  background: #fff;
+  color: #0a3d91;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.cell.block {
+  background: #222;
+  border: 1px solid #222;
+}
+
+button {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5em 1.2em;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+button:hover {
+  background: #125ea2;
+}
+
+select {
+  margin-left: 0.5em;
+  margin-right: 1em;
+  padding: 0.2em 0.5em;
+  font-size: 1em;
+}
+
+@media (max-width: 600px) {
+  .crossword-grid {
+    padding: 2px;
   }
-  to {
-    transform: rotate(360deg);
+  .cell {
+    width: 1.7em;
+    height: 1.7em;
   }
 }
